@@ -1,0 +1,87 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>Item: {{ listing.title }}</h2>
+    <p>Item ID: {{ listing.id }}</p>
+
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+    {% if not listing.photo == "" %}
+        <img src="{{ listing.photo }}" alt="{{ listing.title }}" style="max-width:500px;max-height:500px">
+    {% endif %}
+
+    <div>
+        <h4>Description:</h4>
+        <p>{{listing.description}}</p>
+        <p>Current Price: ${{current_price}}</p>
+    </div>
+
+    {% if listing.seller == User %}
+        <form action="{% url 'close' listing.id %}" method="POST">
+            {% csrf_token %}
+            <input class="btn btn-primary" type="submit" value="Close Listing">
+        </form>
+    {% endif %}
+
+    <ul>
+        {%for bid in bids %}
+            <li>{{ bid }}</li>
+        
+        {% endfor %}
+    </ul>
+
+    {% if listing.is_closed %}
+        <h4>Bidding on this item is now closed.</h4>
+        {% if User == winner %}
+            <h5>You are the winner. Congratulations!</h5>
+        {% endif %}
+    {% endif %}
+    <div>
+        <h3>Make a Bid</h3>
+        <form action="{% url 'listing_id' listing.id %}" method="POST">
+            {% csrf_token %}
+            {{ bidform }}
+            <div>
+                <input class="btn btn-primary" type="submit" value="Submit Bid">
+            </div>
+        </form>
+        
+        <form action="{% url 'watch' listing.id %}" method="POST">
+            {% csrf_token %}
+            <br>
+            <div>
+                <p>
+                    <input class="btn btn-primary" type="submit" value="Watch / Unwatch">
+                    {% if is_watching %}
+                        You are watching this item
+                    {% endif %}
+                </p>
+
+            </div>
+            <br>
+        </form>        
+
+        <h3>Make a Comment</h3>
+        <form action="{% url 'comment' listing.id %}" method="POST">
+            {% csrf_token %}
+            {{ commentform }}
+            <div>
+                <input class="btn btn-primary" type="submit" value="Submit Comment">
+            </div>
+        </form>
+
+        <ul>
+            {%for comment in comments %}
+                <li>{{ comment }}</li>
+    
+            {% endfor %}
+        </ul>
+    </div>
+
+
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    
+    <a class="nav-link" href="{% url 'listing' %}">Create Listing</a>
+
+    <ul>
+        {% for listing in Listings %}
+            <li>
+                <a href="{% url 'listing_id' listing.id %}">
+                    {{ listing.title }}
+                </a>
+                <div>
+                    {{ listing.category }}
+                </div>
+
+                {% if not listing.photo == "" %}
+                    <img src="{{ listing.photo }}" alt="{{ listing.title }}" style="max-width:500px;max-height:500px">
+                {% endif %}
+                
+                <p>{{ listing.description }}</p>
+            </li>
+        {% empty %}
+            <li>(No listings)</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
